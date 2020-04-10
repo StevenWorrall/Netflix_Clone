@@ -57,9 +57,9 @@ class MainController: UIViewController {
     private func initalSetup() {
         self.view.backgroundColor = .black
         
-        let topInset = view.safeAreaInsets.top
-        print(topInset)
-        self.tableView.contentInset = UIEdgeInsets(top: -topInset, left: 0, bottom: 0, right: 0)
+//        let topInset = view.safeAreaInsets.top
+//        print(topInset)
+//        self.tableView.contentInset = UIEdgeInsets(top: -topInset, left: 0, bottom: 0, right: 0)
         
         self.tableView.delegate = self
         self.tableView.dataSource = self
@@ -72,13 +72,13 @@ class MainController: UIViewController {
             make.edges.equalToSuperview()
         }
         
-//        self.view.addSubview(self.topNavBar)
-//        self.topNavBar.snp.makeConstraints { (make) in
-//            self.topNavBarConstraint = make.top.equalTo(self.view.snp.top).offset(self.currentNavBarOffset).constraint
-//            make.leading.equalTo(self.view.snp.leading)
-//            make.trailing.equalTo(self.view.snp.trailing)
-//            make.height.equalTo(self.navViewHeight)
-//        }
+        self.view.addSubview(self.topNavBar)
+        self.topNavBar.snp.makeConstraints { (make) in
+            self.topNavBarConstraint = make.top.equalTo(self.view.snp.top).offset(self.currentNavBarOffset).constraint
+            make.leading.equalTo(self.view.snp.leading)
+            make.trailing.equalTo(self.view.snp.trailing)
+            make.height.equalTo(self.navViewHeight)
+        }
     }
 }
 
@@ -109,7 +109,7 @@ extension MainController: UITableViewDelegate, UITableViewDataSource {
     func tableView(_ tableView: UITableView, viewForHeaderInSection section: Int) -> UIView? {
         if section != self.sectionForFeature {
             let headerView = SectionHeaderView()
-            headerView.addLabelText(text: data.objectsArray[section].category)
+            headerView.addLabelText(text: data.objectsArray[section - 1].category)
             return headerView
         }
         return UIView()
@@ -182,30 +182,11 @@ extension MainController: UITableViewDelegate, UITableViewDataSource {
 
 extension MainController: CollectionViewCellDelegate {
     func recreateAndAnimate(tableviewCell: CollectionTableViewCell, circularVideoCell: CircularVideoCell) {
-        // safe area insets make centerpoint off due to top being larger than bottom
-        let trueCenterY = self.view.center.y + self.view.safeAreaInsets.top - self.view.safeAreaInsets.bottom
-        
         let mainImgOverlay = setupOverlay(imageView: circularVideoCell.backgroundImageView, makeCircle: true, addBlur: true)
-        let mainImgX = self.view.center.x - circularVideoCell.center.x + tableviewCell.previewCollection.contentOffset.x
-        let mainImgY = trueCenterY - circularVideoCell.center.y - (self.topNavBar.bounds.height + self.headerHeight) + self.tableView.contentOffset.y
-        let mainImgTranslateNum: CGFloat = 9
-        let mainImgOrgTransform = mainImgOverlay.transform
-        let mainImgScaledTransform = mainImgOrgTransform.translatedBy(x: mainImgX, y: mainImgY)
-        let mainImgScaledAndTranslatedTransform = mainImgScaledTransform.scaledBy(x: mainImgTranslateNum, y: mainImgTranslateNum)
-        
-//        let convertedFrame = circularVideoCell.logoView.convert(circularVideoCell.logoView.frame, to: self.view)
-//        print(convertedFrame)
-//        let logoImgOverlay = setupOverlay(imageView: circularVideoCell.logoView, makeCircle: false, addBlur: false)
-//        let logoImgX = 10 + convertedFrame.minX - tableviewCell.previewCollection.contentOffset.x
-//        let logoImgY = 90 - convertedFrame.maxY + self.view.safeAreaInsets.top + self.tableView.contentOffset.y
-//        let logoImgTranslateNum: CGFloat = 2
-//        let logoImgOrgTransform = logoImgOverlay.transform
-//        let logoImgScaledTransform = logoImgOrgTransform.translatedBy(x: logoImgX, y: logoImgY)
-//        let logoImgScaledAndTranslatedTransform = logoImgScaledTransform.scaledBy(x: logoImgTranslateNum, y: logoImgTranslateNum)
+        let mainImageTransformation = getTransform(tableviewCell: tableviewCell, circularVideoCell: circularVideoCell, overlay: mainImgOverlay)
         
         UIView.animate(withDuration: 0.35, delay: 0, options: .curveEaseOut, animations: {
-            mainImgOverlay.transform = mainImgScaledAndTranslatedTransform
-//            logoImgOverlay.transform = logoImgScaledAndTranslatedTransform
+            mainImgOverlay.transform = mainImageTransformation
         }){ (completed: Bool) in
             let newVC = PreviewController(image: mainImgOverlay)
             newVC.modalPresentationStyle = .overCurrentContext
@@ -213,6 +194,30 @@ extension MainController: CollectionViewCellDelegate {
             self.present(newVC, animated: false, completion: nil)
             
         }
+    }
+    
+    private func getTransform(tableviewCell: CollectionTableViewCell, circularVideoCell: CircularVideoCell, overlay: UIImageView) -> CGAffineTransform {
+        //TODO clean up this code
+        // safe area insets make centerpoint off due to top being larger than bottom
+        let trueCenterY = self.view.center.y + self.view.safeAreaInsets.top - self.view.safeAreaInsets.bottom
+        
+        let mainImgX = self.view.center.x - circularVideoCell.center.x + tableviewCell.previewCollection.contentOffset.x
+        let mainImgY = trueCenterY - circularVideoCell.center.y - (self.topNavBar.bounds.height + self.featureCellHeight) + self.tableView.contentOffset.y
+        let mainImgTranslateNum: CGFloat = 9
+        let mainImgOrgTransform = overlay.transform
+        let mainImgScaledTransform = mainImgOrgTransform.translatedBy(x: mainImgX, y: mainImgY)
+        
+        //        let convertedFrame = circularVideoCell.logoView.convert(circularVideoCell.logoView.frame, to: self.view)
+        //        print(convertedFrame)
+        //        let logoImgOverlay = setupOverlay(imageView: circularVideoCell.logoView, makeCircle: false, addBlur: false)
+        //        let logoImgX = 10 + convertedFrame.minX - tableviewCell.previewCollection.contentOffset.x
+        //        let logoImgY = 90 - convertedFrame.maxY + self.view.safeAreaInsets.top + self.tableView.contentOffset.y
+        //        let logoImgTranslateNum: CGFloat = 2
+        //        let logoImgOrgTransform = logoImgOverlay.transform
+        //        let logoImgScaledTransform = logoImgOrgTransform.translatedBy(x: logoImgX, y: logoImgY)
+        //        let logoImgScaledAndTranslatedTransform = logoImgScaledTransform.scaledBy(x: logoImgTranslateNum, y: logoImgTranslateNum)
+        
+        return mainImgScaledTransform.scaledBy(x: mainImgTranslateNum, y: mainImgTranslateNum)
     }
     
     private func setupOverlay(imageView: UIImageView, makeCircle: Bool, addBlur: Bool) -> UIImageView {
