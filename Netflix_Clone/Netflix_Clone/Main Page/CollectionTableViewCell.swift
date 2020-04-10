@@ -68,7 +68,7 @@ extension CollectionTableViewCell: UICollectionViewDelegate, UICollectionViewDat
     }
     
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
-        switch rowType {
+        switch rowType {  
         case .circle:
             let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "previewCell", for: indexPath) as! CircularVideoCell
             cell.backgroundImage = self.data?[indexPath.row].image ?? UIImage.from(color: .gray)
@@ -81,6 +81,8 @@ extension CollectionTableViewCell: UICollectionViewDelegate, UICollectionViewDat
             cell.backgroundImageView.image = cell.backgroundImage
             
             return cell
+        case .featured:
+            return UICollectionViewCell()
         case .none:
             let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "plainCell", for: indexPath) as! RectVideoCell
             cell.backgroundImage = self.data?[indexPath.row].image ?? UIImage.from(color: .gray)
@@ -96,6 +98,8 @@ extension CollectionTableViewCell: UICollectionViewDelegate, UICollectionViewDat
             return CGSize(width: 110, height: 125)
         case .square:
             return CGSize(width: 110, height: 200)
+        case .featured:
+            return CGSize()
         case .none:
             return CGSize(width: 110, height: 200)
         }
@@ -115,6 +119,8 @@ extension CollectionTableViewCell: UICollectionViewDelegate, UICollectionViewDat
             let cell = collectionView.cellForItem(at: indexPath) as! CircularVideoCell
             self.cellDelegate?.recreateAndAnimate(tableviewCell: self, circularVideoCell: cell)
         case .square:
+            return
+        case .featured:
             return
         case .none:
             return

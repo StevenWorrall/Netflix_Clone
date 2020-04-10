@@ -20,9 +20,9 @@ class MainController: UIViewController {
     private let headerHeight: CGFloat = 40
     private let footerHeight: CGFloat = 16
     private let navViewHeight: CGFloat = 80
-    private let circleCellHeight: CGFloat = 125
+    private let circleCellHeight: CGFloat = 130
     private let rectCellHeight: CGFloat = 200
-    private let featureCellHeight: CGFloat = 300
+    private let featureCellHeight: CGFloat = 500
     private let sectionForFeature = 0
     private let numExtraSections = 1
     
@@ -36,6 +36,7 @@ class MainController: UIViewController {
         temp.sectionHeaderHeight = 0.0
         temp.insetsContentViewsToSafeArea = false
         temp.contentInsetAdjustmentBehavior = .never
+        temp.bounces = false
         return temp
     }()
     private var backgroundImage: UIImageView = {
@@ -57,15 +58,11 @@ class MainController: UIViewController {
     private func initalSetup() {
         self.view.backgroundColor = .black
         
-//        let topInset = view.safeAreaInsets.top
-//        print(topInset)
-//        self.tableView.contentInset = UIEdgeInsets(top: -topInset, left: 0, bottom: 0, right: 0)
-        
         self.tableView.delegate = self
         self.tableView.dataSource = self
         
         self.tableView.register(CollectionTableViewCell.self, forCellReuseIdentifier: self.collectionTableReuseID)
-        self.tableView.register(CollectionTableViewCell.self, forCellReuseIdentifier: self.featureTableReuseID)
+        self.tableView.register(FeatureTableViewCell.self, forCellReuseIdentifier: self.featureTableReuseID)
         
         self.view.addSubview(tableView)
         self.tableView.snp.makeConstraints { (make) in
@@ -85,7 +82,7 @@ class MainController: UIViewController {
 extension MainController: UITableViewDelegate, UITableViewDataSource {
     
     func numberOfSections(in tableView: UITableView) -> Int {
-        return data.objectsArray.count + self.numExtraSections
+        return data.objectsArray.count
     }
     
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
@@ -93,17 +90,16 @@ extension MainController: UITableViewDelegate, UITableViewDataSource {
     }
     
     func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
-        if indexPath.section == self.sectionForFeature {
+        let sectionType = data.objectsArray[indexPath.section].sectionType
+        
+        if sectionType == .featured {
             return self.featureCellHeight
+        } else if sectionType == .circle {
+            return self.circleCellHeight
         } else {
-            let section = data.objectsArray[indexPath.section - self.numExtraSections].sectionType
-            
-            if section == .circle {
-                return self.circleCellHeight
-            } else {
-                return self.rectCellHeight
-            }
+            return self.rectCellHeight
         }
+        
     }
     
     func tableView(_ tableView: UITableView, viewForHeaderInSection section: Int) -> UIView? {
@@ -133,11 +129,15 @@ extension MainController: UITableViewDelegate, UITableViewDataSource {
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         if indexPath.section == self.sectionForFeature {
             if let cell = tableView.dequeueReusableCell(withIdentifier: self.featureTableReuseID, for: indexPath) as? FeatureTableViewCell {
+                
+                let sectionData = data.objectsArray[indexPath.section].videos[0]
+                cell.backgroundImage.image = sectionData.image
+                
                 return cell
             }
         } else {
             if let cell = tableView.dequeueReusableCell(withIdentifier: self.collectionTableReuseID, for: indexPath) as? CollectionTableViewCell {
-                let sectionData = data.objectsArray[indexPath.section - self.numExtraSections]
+                let sectionData = data.objectsArray[indexPath.section]
                 
                 if sectionData.sectionType == .circle {
                     cell.updateCellWith(row: sectionData.videos, rowType: .circle)

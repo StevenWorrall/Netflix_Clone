@@ -60,6 +60,16 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		43E5BBB2244124ED00617515 /* Services */ = {
+			isa = PBXGroup;
+			children = (
+				43658A2A24062B3700F571DA /* Data.swift */,
+				43658A2E24062BDA00F571DA /* DataModels.swift */,
+				43658A3024074BCB00F571DA /* Utilities.swift */,
+			);
+			path = Services;
+			sourceTree = "<group>";
+		};
 		B01B1525233ABFEA00AA8175 = {
 			isa = PBXGroup;
 			children = (
@@ -85,8 +95,7 @@
 				B01B1533233ABFEA00AA8175 /* SceneDelegate.swift */,
 				B0937A23233AD37F00B5DE51 /* Main Page */,
 				B0937A24233AD38C00B5DE51 /* Preview Page */,
-				43658A2A24062B3700F571DA /* Data.swift */,
-				43658A3024074BCB00F571DA /* Utilities.swift */,
+				43E5BBB2244124ED00617515 /* Services */,
 				B01B153A233ABFEC00AA8175 /* Assets.xcassets */,
 				B01B153C233ABFED00AA8175 /* LaunchScreen.storyboard */,
 				B01B153F233ABFED00AA8175 /* Info.plist */,
@@ -98,13 +107,12 @@
 			isa = PBXGroup;
 			children = (
 				B01B1535233ABFEA00AA8175 /* MainController.swift */,
-				43658A242405F2A100F571DA /* TopNavBarView.swift */,
-				436ACD07242AF13A0021D42E /* SectionHeaderView.swift */,
-				43658A28240625D200F571DA /* CollectionTableViewCell.swift */,
 				436ACD05242AE94B0021D42E /* FeatureTableViewCell.swift */,
+				43658A28240625D200F571DA /* CollectionTableViewCell.swift */,
 				B01B1545233AC13F00AA8175 /* CircularVideoCell.swift */,
 				43658A322407527500F571DA /* RectVideoCell.swift */,
-				43658A2E24062BDA00F571DA /* DataModels.swift */,
+				43658A242405F2A100F571DA /* TopNavBarView.swift */,
+				436ACD07242AF13A0021D42E /* SectionHeaderView.swift */,
 			);
 			path = "Main Page";
 			sourceTree = "<group>";

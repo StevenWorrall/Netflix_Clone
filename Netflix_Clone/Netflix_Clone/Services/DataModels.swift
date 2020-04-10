@@ -23,4 +23,5 @@ struct TableViewCellModel {
 enum RowType {
     case circle
     case square
+    case featured
 }

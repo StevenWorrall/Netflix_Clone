@@ -14,6 +14,12 @@ let defaultImage = UIImage.from(color: .gray)
 struct Data {
     var objectsArray = [
         TableViewCellModel(
+            category: "Featured",
+            sectionType: .featured,
+            videos: [
+                CollectionViewCellModel(image: UIImage(named: "irishman_background_logo") ?? defaultImage, name: "The Irishman")
+        ]),
+        TableViewCellModel(
             category: "Continue Watching",
             sectionType: .circle,
             videos: [
